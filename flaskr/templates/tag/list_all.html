@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block header %}
+  <h1>{% block title %}tags {% endblock %}</h1>
+
+{% endblock %}
+
+{% block content %}
+  {% for tag in tags %}
+    <article class="post">
+      <header>
+        <div>
+          <p><a href="/tag/{{tag['tag_text']}} ">{{ tag['tag_text'] }}</a> -  {{tag['count']}} posts </p>
+        </div>
+      </header>
+
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

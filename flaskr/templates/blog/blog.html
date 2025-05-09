@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}{{post['title']}}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+<article class="post">
+    <header>
+      <div>
+        <div class="about">by <a href="/user/{{post['author_id']}}">{{ post['username'] }}</a> on {{ post['created'].strftime('%Y-%m-%d') }}</div>
+        <div class="about">likes:{{ post['likes'] }} </div>
+      </div> 
+      {% if g.user['id'] == post['author_id'] %}
+        <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
+      {% endif %}
+    </header>
+    <p class="body">{{ post['body'] }}</p>
+  </article>
+  <hr>
+  {% if g.user %}
+  <a href="{{ url_for('like.like_post', post_id=post['id']) }} ">Like post | </a>
+  <a href="{{ url_for('like.dislike_post', post_id=post['id']) }}">Dislike post</a>
+  <hr>
+  {% endif %}
+
+  <h4>Tags</h4> 
+  {% for tag in tags %}
+  <label>
+    <a href="/tag/{{tag['tag_text']}}">{{tag['tag_text']}}</a>
+    <a href="{{ url_for('tag.delete_tag',post_id=post['id'],tag_text=tag['tag_text']) }}" class="danger" style="text-decoration:none"> X </a> <label>|</label>
+  </label>
+  {% endfor%}
+
+  {% if g.user %}
+  <form method="post" action="{{ url_for('tag.add_tag', post_id=post['id']) }}">
+    <input name="tag_text" required>
+    <input type="submit" value="add tag">
+  </form>
+  <hr>
+  <h4>New comment</h4>
+  <form method="post" action="{{ url_for('comment.add_comment', post_id=post['id']) }} ">
+    <label for="title">Title</label>
+    <input name="title" id="title" value="{{ request.form['title'] }}" required>
+    <label for="body">Body</label>
+    <textarea name="body" id="body">{{ request.form['body'] }}</textarea>
+    <input type="submit" value="Add comment">
+  </form>
+  {% endif %}
+  <hr>
+  
+  <h4>Comments</h4>
+  {% for comment in comments%}
+    <article class="post">
+        <div>{{comment['title']}} </div>
+        <div class="about">by {{ comment['username'] }} on {{ comment['created'].strftime('%Y-%m-%d') }}</div>
+        <p>{{comment['body']}} </p>
+        {% if g.user['id'] == comment['user_id'] %}
+            <!-- <a class="action" href="#">Edit</a> -->
+            <a class="action" href="{{ url_for('comment.delete_comment', comment_id=comment['id'], post_id=post['id'] ) }} ">Delete comment</a>
+        {% endif %}
+    </article>
+  {% endfor %}
+ 
+
+
+{% endblock %}
