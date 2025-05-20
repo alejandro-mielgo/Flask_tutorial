@@ -92,5 +92,30 @@ def login_required(view):
             return redirect(url_for('auth.login'))
 
         return view(**kwargs)
-
     return wrapped_view
+
+def owner_of_page(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        print(kwargs)
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+        print(kwargs)
+        if g.user['id'] != kwargs['user_id']:
+            return redirect(url_for('auth.login'))
+        
+        return view(**kwargs)
+    return wrapped_view
+
+
+def is_owwner_logged(post_id:int)->bool:
+    post = get_db().execute(
+        'SELECT p.id, title, body, created, author_id, username, likes'
+        ' FROM post p JOIN user u ON p.author_id = u.id'
+        ' WHERE p.id = ?',
+        (post_id,)
+    ).fetchone()
+
+    if post['author_id'] == g.user['id']:
+        return True
+    return False

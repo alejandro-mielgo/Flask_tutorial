@@ -2,8 +2,9 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
 )
 
-from .auth import login_required
+from .auth import login_required, owner_of_page, is_owwner_logged
 from .db import get_db
+
 
 bp = Blueprint('tag', __name__)
 
@@ -40,22 +41,17 @@ def get_tags():
     return tags
 
 
-def delete_tag(post_id:int, tag_text:str):
-    db = get_db()
-    db.execute(
-        'DELETE from tag WHERE post_id=? AND tag_text=?',(post_id,tag_text)
-    )
-    db.commit()
-
-
-
 # Routes 
 
 @bp.route('/<int:post_id>/add_tag', methods=('POST',))
 @login_required
 def add_tag(post_id):
+
+    if is_owwner_logged(post_id=post_id)==False:
+        flash('You are not the owner if this post, you can\'t add tags')
+        return redirect(f"/blog/{post_id}")
+    
     tag_text:str = request.form['tag_text']
-    print(tag_text)
     db = get_db()
     db.execute(
         'INSERT INTO tag (tag_text, user_id, post_id)'
@@ -66,14 +62,22 @@ def add_tag(post_id):
     db.commit()
     return redirect(f"/blog/{post_id}")
 
+
 @bp.route('/<int:post_id>/remove_tag/<string:tag_text>', methods=('GET',))
+@login_required
 def delete_tag(post_id:int, tag_text:str):
+
+    if is_owwner_logged(post_id=post_id)==False:
+        flash('You are not the owner if this post. You can\'t delete tags')
+        return redirect(f"/blog/{post_id}")
+    
     db = get_db()
     db.execute(
         'DELETE from tag WHERE post_id=? AND tag_text=?',(post_id,tag_text)
     )
     db.commit()
     return redirect(f"/blog/{post_id}")
+
 
 
 @bp.route('/tag/<string:tag_text>', methods=('GET',))
@@ -89,6 +93,8 @@ def show_all_tags():
     return render_template('tag/list_all.html', tags=tags) 
 
 
+
+
 @bp.route('/api/tag', methods=('GET',))
 def api_all_tags():
     tags = get_tags()
@@ -96,6 +102,7 @@ def api_all_tags():
     for tag in tags:
         tag['posts'] = [dict(post)['title'] for post in get_posts_per_tag(tag['tag_text'])]
     return tags
+
 
 @bp.route('/api/tag/<string:tag_text>', methods=('GET',))
 def api_posts_per_tag(tag_text):

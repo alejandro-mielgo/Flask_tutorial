@@ -58,6 +58,8 @@ def index():
         posts = search_posts_by_title_or_tag(search_term=search_term)
         print(posts)
         return render_template('blog/index.html', posts=posts)
+    else:
+        return "<p>method not allowed</p>"
 
 
 @bp.route('/blog/create', methods=('GET', 'POST'))

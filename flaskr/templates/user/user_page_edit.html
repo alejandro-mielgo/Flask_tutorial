@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}User page - {{ user['username'] }}{% endblock %}</h1>
+  {% if g.user and g.user['id'] != user['id'] %}
+    <a href="#">Follow user</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<h2>Information</h2>
+<a href="/user/{{user['id']}}">cancel</a>
+<form method="POST">
+  <label>name </label>
+  <input type="text" name="name" value="{{user['name']}}">
+  <label>surname </label>
+  <input type="text" name="surname" value="{{user['surname']}}">
+  <label>email  </label>
+  <input type="email" name="email" value="{{user['email']}}">
+  <label>telephone -  </label>
+  <input type="tel" name="telephone" value="{{user['telephone']}}">
+  <input type="submit" value="Update">
+
+</form>  
+
+
+{% endblock %}
+

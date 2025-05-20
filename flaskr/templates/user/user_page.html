@@ -8,6 +8,15 @@
 {% endblock %}
 
 {% block content %}
+<h2>Information</h2>
+{% if g.user['id'] == user['id']%}
+  <a href="/user/{{user['id']}}/edit"> edit information</a>
+{% endif %}  
+<p>name - {{user.name}}</p>
+<p>surname - {{user.surname}} </p>
+<p>email - {{user.email}} </p>
+<p>telephone - {{user.telephone}} </p>
+
 <h2>Posts</h2>
  {% for post in posts %}
     <div>
@@ -17,3 +26,4 @@
  {% endfor %}
 
 {% endblock %}
+
