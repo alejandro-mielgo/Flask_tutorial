@@ -16,7 +16,9 @@
         <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
       {% endif %}
     </header>
-    <p class="body">{{ post['body'] }}</p>
+    
+      <p class="body">{% filter markdown %}{{ post['body'] }}{% endfilter %}</p>
+    
   </article>
   <hr>
   {% if g.user %}
@@ -39,14 +41,16 @@
     <input type="submit" value="add tag">
   </form>
   <hr>
-  <h4>New comment</h4>
-  <form method="post" action="{{ url_for('comment.add_comment', post_id=post['id']) }} ">
-    <label for="title">Title</label>
-    <input name="title" id="title" value="{{ request.form['title'] }}" required>
-    <label for="body">Body</label>
-    <textarea name="body" id="body">{{ request.form['body'] }}</textarea>
-    <input type="submit" value="Add comment">
-  </form>
+
+  <details name="New Comment"><summary>New comment</summary>
+    <form method="post" action="{{ url_for('comment.add_comment', post_id=post['id']) }} ">
+      <label for="title">Title</label>
+      <input name="title" id="title" value="{{ request.form['title'] }}" required>
+      <label for="body">Body</label>
+      <textarea name="body" id="body">{{ request.form['body'] }}</textarea>
+      <input type="submit" value="Add comment">
+    </form>
+  </details>
   {% endif %}
   <hr>
   

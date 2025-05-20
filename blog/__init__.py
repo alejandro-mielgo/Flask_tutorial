@@ -1,16 +1,18 @@
 import os
-
 from flask import Flask
+from flaskext.markdown import Markdown  #hay que cambiar la importacion de markdown en la librería!!!
 
-# flask --app flaskr run --debug
+
+# flask --app blog run --debug
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+        DATABASE=os.path.join(app.instance_path, 'blog.sqlite'),
     )
+    md = Markdown(app)
 
     if test_config is None:
         app.config.from_pyfile('config.py', silent=True)
@@ -23,26 +25,26 @@ def create_app(test_config=None):
     except OSError:
         pass
     
-    from flaskr.views import db
+    from blog.views import db
     db.init_app(app)
 
-    from flaskr.views import auth
+    from blog.views import auth
     app.register_blueprint(auth.bp)
 
-    from flaskr.views import blog
+    from blog.views import blog
     app.register_blueprint(blog.bp)
     app.add_url_rule('/', endpoint='index')
 
-    from flaskr.views import like
+    from blog.views import like
     app.register_blueprint(like.bp)
 
-    from flaskr.views import comment
+    from blog.views import comment
     app.register_blueprint(comment.bp)
 
-    from flaskr.views import tag
+    from blog.views import tag
     app.register_blueprint(tag.bp)
 
-    from flaskr.views import user
+    from blog.views import user
     app.register_blueprint(user.bp)
 
 

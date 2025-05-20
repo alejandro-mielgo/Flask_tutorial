@@ -4,7 +4,7 @@ from datetime import datetime
 import click
 from flask import current_app, g
 
-# flask --app flaskr init-db
+# flask --app blog init-db
 
 def get_db():
     if 'db' not in g:

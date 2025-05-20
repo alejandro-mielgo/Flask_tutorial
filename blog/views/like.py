@@ -29,7 +29,7 @@ def has_been_liked(post_id) -> bool:
 def like_post(post_id):
 
     if has_been_liked(post_id=post_id):
-        print('blog already liked')
+        flash('Post has already been liked')
         return redirect(f"/blog/{post_id}") 
 
 
@@ -55,7 +55,7 @@ def like_post(post_id):
 def dislike_post(post_id):
 
     if has_been_liked(post_id=post_id) == False:
-        print('cannot dislike post')
+        flash('Post has already been disliked')
         return redirect(f"/blog/{post_id}") 
 
     post = get_post(post_id,check_author=False) 
